@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1488713663 source:c:\users\armada nasar\documents\kuliah\programming\c\simpleexamapp\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<unistd.h>
+	<direct.h>
+	"stringTable.h"
+
+1488713531 c:\users\armada nasar\documents\kuliah\programming\c\simpleexamapp\stringtable.h
+
