@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[])
 {
-    //argc = 2;
+    argc = 2;
     if (argc != 2)
     {
         printf("How to use app:\n\n%s <number_of_questions>", argv[0]);
@@ -16,36 +16,32 @@ int main(int argc, char *argv[])
 
     else
     {
-        //argv[1] = "1";
+        argv[1] = "1";
         long int numberInput = strtol(argv[1], NULL, 10);
         int filesPresent = checkExamFiles(numberInput);
+        int examIsDone = 0;
 
         if (filesPresent == 1)
         {
-            char *repeatIdentifier;
-            repeatIdentifier = malloc(3 * sizeof(char));
-
             char *repeatBuffer;
-            repeatBuffer = malloc(3 * sizeof(char));
+            repeatBuffer = malloc(3 * sizeof(*repeatBuffer));
 
-            do {
+            do
+            {
                 CLEAR_SCREEN
 
                 printf("Press enter when you are ready for the exam..\n\n");
                 getchar();
 
-                int examIsDone = mainExamLoop(numberInput);
+                examIsDone = mainExamLoop(numberInput);
                 if (examIsDone == 1)
                 {
                     printf(REPEAT_OFFER_STRING);
                     fgets(repeatBuffer, sizeof(repeatBuffer), stdin);
-                    repeatIdentifier[0] = parseResponse(repeatBuffer[0]);
-                    printf("a%c a", repeatIdentifier[0]);
+                    repeatBuffer[0] = parseResponse(repeatBuffer[0]);
                 }
+            }while(repeatBuffer[0] != 'N');
 
-            }while(repeatIdentifier[0] != 'N');
-
-            free(repeatIdentifier);
             free(repeatBuffer);
         }
 
@@ -98,6 +94,7 @@ int checkExamFiles(const long int questionNumbers)
 
         else
         {
+            fclose(questionFile);
             errorHandler(FOPEN_FAILED_QUESTION_ERROR_CODE);
         }
     }
@@ -170,19 +167,19 @@ int mainExamLoop(const long int questionNumbers)
         {
             if (fgets(questionBuffer, sizeof(questionBuffer), fp) != NULL)
             {
+                //once copied to buffer, the file is no longer needed!
+                fclose(fp);
                 CLEAR_SCREEN
                 printf("%s\n\nPlease input your answer (A/B/C/D): ", questionBuffer);
 
                 if (fgets(answerHolder, sizeof(answerHolder), stdin) != NULL)
                 {
                     answers[iteration] = parseResponse(answerHolder[0]);
-                    fclose(fp);
                     continue;
                 }
 
                 else
                 {
-                    fclose(fp);
                     errorHandler(USER_INPUT_FAILED_ERROR_CODE);
                 }
             }
@@ -239,7 +236,8 @@ int generateResults(char answerKeys[], char answers[], const int questionNumbers
 
         else
         {
-            correctAnswers += 0;
+            continue;
+            //correctAnswers += 0;
         }
     }
 
@@ -306,6 +304,7 @@ int generateGrade(double score, long int questionNumbers)
     }
 
     printf(GRADE_STRING, gradeCode, score);
+    getchar();
     return 1;
 }
 
